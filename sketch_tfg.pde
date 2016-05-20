@@ -19,12 +19,15 @@ char value_message[100];
 /////////////////////////////////
 #define ESSID "mi_punto_de_acceso"
 #define AUTHKEY "mipass"
-
+#define WEB_SERVER "antonio.com"
 // define timeout for listening to messages
 #define TIMEOUT 10000
 char gps []= "36.7102897,-4.4668383,17z";
 // variable to measure time
 unsigned long previous;
+//POST SENTENCE
+char sentence[300];
+uint8_t status;
 /////////////////////////////////
 
 void setup() {
@@ -53,14 +56,17 @@ void loop() {
   WIFI.ON(socket);
   if (WIFI.join(ESSID))  {
     USB.println(F("Conexión con el AP establecida"));
-    // 3. Llama a la funcion para establecer el cliente 
-    if (WIFI.setTCPclient(IP_ADDRESS, REMOTE_PORT, LOCAL_PORT)) {
-      USB.println(F("Conexion con el cliente establecido"));
-      WIFI.send(value_message);
-      USB.println(F("Cierra socket"));
-      WIFI.close(); 
+    sprintf(sentence,"GET$/",value_message);
+    USB.print("sentence:");
+    USB.println(sentence);
+    status = WIFI.getURL(DNS,WEB_SERVER,sentence);
+    if(status) {
+      USB.println(F("\nPeticion OK."));
+      USB.println(WIFI.answer);
     }
-    WIFI.leave();
+    else{
+      USB.println(F("\nERROR PETICION")); 
+    }
   }
   else {
     USB.println(F("Conexión fallida"));
@@ -82,8 +88,8 @@ void wifi_setup() {
   // Encender el módulo WiFi en el socket deseeado
   if( WIFI.ON(socket) == 1 ){
     USB.println(F("WiFi encendido"));
-    // 1. Configura el protocolo a seguir. CLIENT = Cliente TCP 
-    WIFI.setConnectionOptions(CLIENT); 
+    // 1. Configura el protocolo a seguir. 
+    WIFI.setConnectionOptions(HTTP|CLIENT_SERVER); 
     // 2. Configura como obtener la IP.
     WIFI.setDHCPoptions(DHCP_ON);    
     // 3. Configura como conectarte al AP
@@ -100,6 +106,7 @@ void wifi_setup() {
 
 
 }
+
 
 
 
