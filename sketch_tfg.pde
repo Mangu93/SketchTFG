@@ -2,11 +2,13 @@
 #include <WaspSensorCities.h>
 //Libreria para la conectividad WiFi
 #include <WaspWIFI.h>
+//Libreria para modificar strings
+#include<string.h>
 //Socket para la conexion WiFi
 uint8_t socket=SOCKET0;
 // Variable para guardar el valor del microfono
 float value;
-char* value_message;
+char value_message[100];
 
 //Dirección IP y puertos
 #define IP_ADDRESS "???.???.???.???"
@@ -20,7 +22,7 @@ char* value_message;
 
 // define timeout for listening to messages
 #define TIMEOUT 10000
-char* gps = "36.7102897,-4.4668383,17z";
+char gps []= "36.7102897,-4.4668383,17z";
 // variable to measure time
 unsigned long previous;
 /////////////////////////////////
@@ -35,7 +37,7 @@ void setup() {
   RTC.ON();
   //Activa la conexion Wifi
   wifi_setup();
-  value = 70;
+  value = 30; //Umbral de ruido
 }
 
 
@@ -45,7 +47,9 @@ void loop() {
   SensorCities.setSensorMode(SENS_ON, SENS_CITIES_AUDIO);
   delay(2000);
   //value = SensorCities.readValue(SENS_CITIES_AUDIO);
-  sprintf(value_message, "%s", value, gps);
+  sprintf(value_message,"%f",value);
+  strcat(value_message,",");
+  strcat(value_message,gps);
   WIFI.ON(socket);
   if (WIFI.join(ESSID))  {
     USB.println(F("Conexión con el AP establecida"));
@@ -96,6 +100,7 @@ void wifi_setup() {
 
 
 }
+
 
 
 
