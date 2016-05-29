@@ -32,10 +32,10 @@ uint8_t status;
 
 void setup() {
   // put your setup code here, to run once:
-  USB.ON();
+  USB.begin();
   delay(100);
   //Enciende el sensor
-  SensorCities.ON();
+  SensorCities.setBoardMode(SENS_ON);
   //Enciende el reloj
   RTC.ON();
   //Activa la conexion Wifi
