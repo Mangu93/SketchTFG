@@ -11,6 +11,7 @@ float value;
 char value_message[100];
 
 //Dirección IP y puertos
+//TO-DO : ADD PUERTO ANTONIO
 #define IP_ADDRESS "???.???.???.???"
 #define REMOTE_PORT 8002
 #define LOCAL_PORT 2000 //???
@@ -59,7 +60,7 @@ void loop() {
     sprintf(sentence,"GET$/",value_message);
     USB.print("sentence:");
     USB.println(sentence);
-    status = WIFI.getURL(DNS,WEB_SERVER,sentence);
+    status = WIFI.getURL(IP,WEB_SERVER,sentence);
     if(status) {
       USB.println(F("\nPeticion OK."));
       USB.println(WIFI.answer);
